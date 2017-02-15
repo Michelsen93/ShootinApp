@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
         //Hei sindre!
         //Hei på dei din store sei!
         //Hei heiheihei
+        // Hva skjer'a bagera?
         setContentView(R.layout.activity_main);
     }
 }

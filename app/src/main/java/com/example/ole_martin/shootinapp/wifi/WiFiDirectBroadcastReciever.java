@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 
 import com.example.ole_martin.shootinapp.activity.MyWifiActivity;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private MyWifiActivity mActivity;
+    WifiP2pDevice mDevice;
     private List<WifiP2pDevice> mPeers;
     private List<WifiP2pConfig> mConfigs;
 
@@ -73,4 +76,41 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
             // Respond to this device's wifi state changing
         }
     }
+
+    public void connect(int position){
+        WifiP2pConfig config = mConfigs.get(position);
+        mDevice = mPeers.get(position);
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener(){
+            @Override
+            public void onSuccess(){
+                //connected
+                mActivity.makeToast("Connected");
+            }
+            @Override
+            public void onFailure(int reason){
+                //Connection failed
+                mActivity.makeToast("Connection failed");
+            }
+        });
+    }
+
+    WifiP2pManager.ConnectionInfoListener infoListener = new WifiP2pManager.ConnectionInfoListener() {
+        @Override
+        public void onConnectionInfoAvailable(WifiP2pInfo info) {
+            InetAddress groupOwnerAddress = info.groupOwnerAddress;
+            if(info.groupFormed){
+                if(info.isGroupOwner){
+                    //this is a host
+                    //do host stuff
+                    mActivity.doService(groupOwnerAddress, true);
+
+                } else{
+                    //this is a client
+                    //do client stuff
+                    mActivity.doService(groupOwnerAddress, false);
+
+                }
+            }
+        }
+    };
 }

@@ -2,24 +2,30 @@ package com.example.ole_martin.shootinapp.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.ole_martin.shootinapp.R;
 import com.example.ole_martin.shootinapp.wifi.WiFiDirectBroadcastReciever;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class MyWifiActivity extends AppCompatActivity {
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
-    BroadcastReceiver mReceiver;
+    WiFiDirectBroadcastReciever mReceiver;
     IntentFilter mIntentFilter;
     ListView mListView;
     ArrayAdapter <String> mAdapter;
@@ -40,7 +46,13 @@ public class MyWifiActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         mListView = (ListView) findViewById(R.id.user_list);
-        //mListView.setOnClickListener(mAdapter, );
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                mReceiver.connect(pos);
+
+            }
+        });
 
 
 
@@ -69,6 +81,19 @@ public class MyWifiActivity extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.user_list);
 
     }
+
+    public void doService(InetAddress address, boolean host){
+        Intent intent = new Intent(this, DataDisplayActivity.class);
+        intent.putExtra("HostAddress", address);
+        intent.putExtra("IsHost", host);
+        intent.putExtra("Connected", true);
+
+        startActivity(intent);
+
+    }
+
+
+
     /* register the broadcast receiver with the intent values to be matched */
     @Override
     protected void onResume() {
@@ -80,5 +105,8 @@ public class MyWifiActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+    }
+    public void makeToast(String toast){
+        Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
     }
 }

@@ -55,9 +55,17 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
                 WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener(){
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList peerList){
-
+                        mPeers.clear();
+                        mPeers.addAll(peerList.getDeviceList());
+                        mActivity.displayUsers(peerList);
+                        mPeers.addAll(peerList.getDeviceList());
+                        for(int i = 0; i<peerList.getDeviceList().size(); i++){
+                            WifiP2pConfig config = new WifiP2pConfig();
+                            config.deviceAddress = mPeers.get(i).deviceAddress;
+                            mConfigs.add(config);
+                        }
                     }
-                }
+                };
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections

@@ -21,11 +21,15 @@ public class MyWifiActivity extends AppCompatActivity {
     WifiP2pManager.Channel mChannel;
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
+    ListView mListView;
+    ArrayAdapter <String> mAdapter;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_wifi);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WiFiDirectBroadcastReciever(mManager, mChannel, this);
@@ -35,7 +39,11 @@ public class MyWifiActivity extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        setContentView(R.layout.activity_my_wifi);
+        mListView = (ListView) findViewById(R.id.user_list);
+        mListView.setOnClickListener(mAdapter, );
+
+
+
     }
 
 
@@ -57,8 +65,8 @@ public class MyWifiActivity extends AppCompatActivity {
         for(WifiP2pDevice peer : peerList.getDeviceList()){
             users.add(peer.deviceName + " " + peer.deviceAddress);
         }
-        ArrayAdapter adapter = new ArrayAdapter<String >(this, android.R.layout.simple_list_item_1,users);
-        ListView lw = (ListView) findViewById(R.id.user_list);
+        mAdapter = new ArrayAdapter<String >(this, android.R.layout.simple_list_item_1,users);
+        mListView = (ListView) findViewById(R.id.user_list);
 
     }
     /* register the broadcast receiver with the intent values to be matched */

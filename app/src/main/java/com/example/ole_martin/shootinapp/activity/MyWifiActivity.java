@@ -9,11 +9,13 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.test.suitebuilder.TestMethod;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ole_martin.shootinapp.R;
@@ -29,6 +31,7 @@ public class MyWifiActivity extends AppCompatActivity {
     IntentFilter mIntentFilter;
     ListView mListView;
     ArrayAdapter <String> mAdapter;
+    TextView tv;
 
 
 
@@ -36,6 +39,7 @@ public class MyWifiActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_wifi);
+        tv = (TextView) findViewById(R.id.status);
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         mReceiver = new WiFiDirectBroadcastReciever(mManager, mChannel, this);
@@ -60,15 +64,18 @@ public class MyWifiActivity extends AppCompatActivity {
 
 
     public void searchForUsers(){
+
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 //show you are searching?
+                tv.setText("Wifi Direct: searching...");
             }
 
             @Override
             public void onFailure(int reasonCode) {
                 //Show error
+                tv.setText("Error : " + reasonCode);
             }
         });
     }
@@ -79,6 +86,7 @@ public class MyWifiActivity extends AppCompatActivity {
         }
         mAdapter = new ArrayAdapter<String >(this, android.R.layout.simple_list_item_1,users);
         mListView = (ListView) findViewById(R.id.user_list);
+        mListView.setAdapter(mAdapter);
 
     }
 
@@ -92,6 +100,9 @@ public class MyWifiActivity extends AppCompatActivity {
 
     }
 
+    public void searchUsers(View view){
+        searchForUsers();
+    }
 
 
     /* register the broadcast receiver with the intent values to be matched */

@@ -51,6 +51,5 @@ public class DataDisplayActivity extends AppCompatActivity {
             }
         }
 
-
     }
 }

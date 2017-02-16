@@ -45,8 +45,10 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if(state == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
                 //set view to show its on
+                mActivity.makeToast("wifi enabled");
+
             }else{
-                //set view to show its off
+                mActivity.makeToast("wifi off");
             }
 
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
@@ -58,6 +60,7 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
                 WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener(){
                     @Override
                     public void onPeersAvailable(WifiP2pDeviceList peerList){
+                        mActivity.makeToast("Found peer");
                         mPeers.clear();
                         mPeers.addAll(peerList.getDeviceList());
                         mActivity.displayUsers(peerList);
@@ -69,6 +72,7 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
                         }
                     }
                 };
+                mManager.requestPeers(mChannel,peerListListener);
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             // Respond to new connection or disconnections

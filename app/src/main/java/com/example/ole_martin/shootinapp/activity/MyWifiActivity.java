@@ -70,6 +70,7 @@ public class MyWifiActivity extends AppCompatActivity {
             public void onSuccess() {
                 //show you are searching?
                 tv.setText("Wifi Direct: searching...");
+
             }
 
             @Override

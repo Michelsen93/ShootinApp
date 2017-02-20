@@ -13,4 +13,13 @@ public class ScoreCard {
     private int sumScore;
     private int sumMark;
     private int id;
+
+    public ScoreCard(List<Round> rounds,String weaponClass, String shooterClass, int sumScore, int sumMark, int id){
+        this.rounds = rounds;
+        this.weaponClass = weaponClass;
+        this.shooterClass = shooterClass;
+        this.sumScore = sumScore;
+        this.sumMark = sumMark;
+        this.id = id;
+    }
 }

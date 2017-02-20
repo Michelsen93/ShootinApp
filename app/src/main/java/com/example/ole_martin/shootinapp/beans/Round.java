@@ -5,10 +5,18 @@ package com.example.ole_martin.shootinapp.beans;
  */
 
 public class Round {
-    public int number;
-    public int hits;
-    public int figures;
-    public int mark;
-    public RoundRules roundRules;
+    private int number;
+    private int hits;
+    private int figures;
+    private int mark;
+    private RoundRules roundRules;
+
+    public Round(int number, int hits, int figures, int mark, RoundRules roundRules){
+        this.number = number;
+        this.hits = hits;
+        this.figures = figures;
+        this.mark = mark;
+        this.roundRules = roundRules;
+    }
 
 }

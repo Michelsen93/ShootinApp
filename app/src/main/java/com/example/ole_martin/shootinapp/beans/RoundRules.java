@@ -8,4 +8,9 @@ public class RoundRules {
     public int numberOfShots;
     public int numberOfFigures;
 
+    public RoundRules(int numberOfShots, int numberOfFigures){
+        this.numberOfShots = numberOfShots;
+        this.numberOfFigures = numberOfFigures;
+    }
+
 }

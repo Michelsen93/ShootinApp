@@ -2,5 +2,9 @@
     <string name="app_name">ShootingApp</string>
     <string name="wifi_status_on">WiFi enabled</string>
     <string name="turn_on_wifi_message">Error: please enable WiFi</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="log_in">log in</string>
+    <string name="sign_up">sign up</string>
 
 </resources>

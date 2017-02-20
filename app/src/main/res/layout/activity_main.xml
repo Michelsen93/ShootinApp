@@ -16,13 +16,24 @@
         android:text="Hello World!" />
 
     <Button
-        android:text="Button"
+    android:text="wifiTest"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="153dp"
+    android:id="@+id/nav_wifi"
+    android:onClick="goToMyWifiActivity"
+    />
+
+    <Button
+        android:text="@string/log_in"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="153dp"
-        android:id="@+id/button"
-        android:onClick="goToMyWifiActivity"
-        />
+        android:id="@+id/nav_login"
+        android:onClick="goToLoginActivity"
+        android:layout_alignTop="@+id/nav_wifi"
+        android:layout_alignLeft="@+id/nav_wifi"
+        android:layout_alignStart="@+id/nav_wifi"
+        android:layout_marginTop="47dp" />
 </RelativeLayout>

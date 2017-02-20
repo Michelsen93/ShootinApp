@@ -17,8 +17,5 @@ public class Contestor extends Person {
 
     }
 
-    @Override
-    public void alterScore() {
 
-    }
 }

@@ -20,8 +20,8 @@ public abstract class  Person {
     public void viewResults(){
 
     }
-    public void alterScore(){
 
-    }
+
+
 
 }

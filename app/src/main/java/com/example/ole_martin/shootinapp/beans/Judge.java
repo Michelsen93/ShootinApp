@@ -14,7 +14,7 @@ public class Judge extends Person {
     public void viewResults(){
 
     }
-    @Override
+
     public void alterScore(){
 
     }

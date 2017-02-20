@@ -22,7 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.MyWifiActivity" />
-        <activity android:name=".activity.DataDisplayActivity"></activity>
+        <activity android:name=".activity.DataDisplayActivity" />
+        <activity android:name=".activity.LoginActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ShootingApp</string>
-    <string name="wifi_status_on">ShootingApp</string>
-    <string name="turn_on_wifi_message">ShootingApp</string>
+    <string name="wifi_status_on">WiFi enabled</string>
+    <string name="turn_on_wifi_message">Error: please enable WiFi</string>
 
 </resources>

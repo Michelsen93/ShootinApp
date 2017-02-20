@@ -1,4 +1,5 @@
 package com.example.ole_martin.shootinapp.wifi;
+import com.example.ole_martin.shootinapp.R;
 import com.example.ole_martin.shootinapp.activity.MyWifiActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,17 +43,19 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
         String action = intent.getAction();
 
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
+            //  Indicates a change in the Wi-Fi P2P status.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if(state == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
-                //set view to show its on
-                mActivity.makeToast("wifi enabled");
+
+
+                mActivity.makeToast("wifi on");
 
             }else{
-                mActivity.makeToast("wifi off");
+                mActivity.makeToast("please enable wifi");
             }
 
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-
+            // Indicates a change in the list of available peers.
             mPeers = new ArrayList<WifiP2pDevice>();
             mConfigs = new ArrayList<WifiP2pConfig>();
 

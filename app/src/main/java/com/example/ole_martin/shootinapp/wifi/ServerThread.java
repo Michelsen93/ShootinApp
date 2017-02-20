@@ -45,6 +45,8 @@ public class ServerThread implements Runnable{
 
             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             try{
+                //This is where you receive data. Store data to sd-card
+                //Try to load to server if wifi or data connection is available
                 socket.receive(receivePacket);
                 receivePacket.getData();
 
@@ -65,7 +67,8 @@ public class ServerThread implements Runnable{
                 if (mClientAddress != null){
                     sendData = (client + sendCount).getBytes();
                     sendCount++;
-
+                    //This is where data is distributeted
+                    //Todo - contain a list of clients, send data to all clients
                     DatagramPacket packet = new DatagramPacket(sendData, sendData.length, mClientAddress,mPort);
 
                     socket.send(packet);

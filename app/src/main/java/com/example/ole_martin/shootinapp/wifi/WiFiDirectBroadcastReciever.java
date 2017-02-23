@@ -96,7 +96,7 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
             @Override
             public void onFailure(int reason){
                 //Connection failed
-                mActivity.makeToast("Connection failed");
+                mActivity.makeToast("Connection failed: " + reason);
             }
         });
     }

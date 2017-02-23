@@ -91,9 +91,10 @@ public class MyWifiActivity extends AppCompatActivity {
 
     }
 
-    public void doService(InetAddress address, boolean host){
+    public void doService(InetAddress hostAddress, boolean host){
+        makeToast("doing service... Is host: " + host);
         Intent intent = new Intent(this, DataDisplayActivity.class);
-        intent.putExtra("HostAddress", address);
+        intent.putExtra("HostAddress", hostAddress.getHostAddress());
         intent.putExtra("IsHost", host);
         intent.putExtra("Connected", true);
 

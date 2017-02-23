@@ -28,7 +28,7 @@ public class DataDisplayActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if(intent.getBooleanExtra("Connected",false)){
-            stringHostAddress = intent.getStringExtra("HostAdress");
+            stringHostAddress = intent.getStringExtra("HostAddress");
 
             try{
                 hostAddress = InetAddress.getByName(stringHostAddress);

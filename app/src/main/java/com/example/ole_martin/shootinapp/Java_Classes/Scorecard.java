@@ -19,4 +19,12 @@ public class Scorecard {
     // The person who owns the card's nr
     int unique_ID;
 
+    public Scorecard(Weapongroup wGroup, ShootingClass sClass, int sumScore, int sumBullseye, int unique_ID){
+        this.weapongroup = wGroup;
+        this.shootingClass = sClass;
+        this.sumScore = sumScore;
+        this.sumBullseye = sumBullseye;
+        this.unique_ID = unique_ID;
+    }
+
 }

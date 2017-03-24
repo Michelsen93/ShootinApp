@@ -8,4 +8,9 @@ public class ShootingClass {
 
     String desription;
     String className;
+
+    public ShootingClass(String desc, String className){
+        this.desription = desc;
+        this.className = className;
+    }
 }

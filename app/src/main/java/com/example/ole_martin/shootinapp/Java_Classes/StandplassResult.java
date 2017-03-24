@@ -10,5 +10,11 @@ public class StandplassResult {
     int figures;
 
     // Innertreff
-    int Bullseyes;
+    int bullseyes;
+
+    public StandplassResult(int hits, int figures, int bullseyes){
+        this.hits = hits;
+        this.figures = figures;
+        this.bullseyes = bullseyes;
+    }
 }

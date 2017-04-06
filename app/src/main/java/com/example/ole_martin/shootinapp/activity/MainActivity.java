@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.ole_martin.shootinapp.R;
+import com.example.ole_martin.shootinapp.maybees.MyWifiActivity;
 
 public class MainActivity extends AppCompatActivity {
 

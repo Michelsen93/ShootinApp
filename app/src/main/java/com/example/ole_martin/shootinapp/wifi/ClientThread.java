@@ -1,6 +1,6 @@
 package com.example.ole_martin.shootinapp.wifi;
 
-import com.example.ole_martin.shootinapp.activity.DataDisplayActivity;
+import com.example.ole_martin.shootinapp.maybees.DataDisplayActivity;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

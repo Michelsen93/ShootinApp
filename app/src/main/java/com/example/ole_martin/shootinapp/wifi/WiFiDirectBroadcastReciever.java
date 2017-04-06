@@ -1,6 +1,5 @@
 package com.example.ole_martin.shootinapp.wifi;
-import com.example.ole_martin.shootinapp.R;
-import com.example.ole_martin.shootinapp.activity.MyWifiActivity;
+import com.example.ole_martin.shootinapp.maybees.MyWifiActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +8,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-
-import com.example.ole_martin.shootinapp.activity.MyWifiActivity;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -105,6 +102,7 @@ public class WiFiDirectBroadcastReciever extends BroadcastReceiver{
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
             InetAddress groupOwnerAddress = info.groupOwnerAddress;
+            mActivity.makeToast("got info!");
             if(info.groupFormed){
                 if(info.isGroupOwner){
                     //this is a host

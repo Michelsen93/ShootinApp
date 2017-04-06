@@ -21,8 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MyWifiActivity" />
-        <activity android:name=".activity.DataDisplayActivity" />
+        <activity android:name=".maybees.MyWifiActivity" />
+        <activity android:name=".maybees.DataDisplayActivity" />
         <activity android:name=".activity.LoginActivity"></activity>
     </application>
 

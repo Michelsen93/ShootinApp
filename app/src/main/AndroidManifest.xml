@@ -24,7 +24,8 @@
         <activity android:name=".maybees.MyWifiActivity" />
         <activity android:name=".maybees.DataDisplayActivity" />
         <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.PickTounamentActivity"></activity>
+        <activity android:name=".activity.PickTounamentActivity" />
+        <activity android:name=".activity.TournamentActivity"></activity>
     </application>
 
 </manifest>

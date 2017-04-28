@@ -1,10 +1,12 @@
 package com.example.ole_martin.shootinapp.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.ole_martin.shootinapp.R;
 
@@ -17,6 +19,7 @@ public class PickTounamentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_tounament);
 
+        Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show();
         Spinner spinner = (Spinner) findViewById(R.id.pick_tournament);
         ArrayList<String> tournamentList = new ArrayList<String>();
         //TODO - Load content to list
@@ -31,8 +34,11 @@ public class PickTounamentActivity extends AppCompatActivity {
         /**
          * if item selected:
          * get item from spinner
-         * save it somewhere to start working with
+         * load tournament with the users team etc.
          * go to next activity
          */
+
+        Intent intent = new Intent(this, TournamentActivity.class);
+        startActivity(intent);
     }
 }

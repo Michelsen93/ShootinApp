@@ -13,20 +13,20 @@ import com.example.ole_martin.shootinapp.R;
 import java.util.ArrayList;
 
 public class PickTounamentActivity extends AppCompatActivity {
-
+    Spinner mSpinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_tounament);
 
         Toast.makeText(this, "Hello", Toast.LENGTH_LONG).show();
-        Spinner spinner = (Spinner) findViewById(R.id.pick_tournament);
+        mSpinner = (Spinner) findViewById(R.id.pick_tournament);
         ArrayList<String> tournamentList = new ArrayList<String>();
         //TODO - Load content to list
         tournamentList.add("t1");
         tournamentList.add("t2");
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, tournamentList);
-        spinner.setAdapter(adp);
+        mSpinner.setAdapter(adp);
     }
 
 
@@ -37,6 +37,10 @@ public class PickTounamentActivity extends AppCompatActivity {
          * load tournament with the users team etc.
          * go to next activity
          */
+
+        String selected = mSpinner.getSelectedItem().toString();
+
+        //Load tournament to phone
 
         Intent intent = new Intent(this, TournamentActivity.class);
         startActivity(intent);

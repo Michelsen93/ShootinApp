@@ -28,7 +28,7 @@ public class TournamentActivity extends AppCompatActivity {
 
 
         //Load standplasses and let user pick one to register result
-        //Let user have option to register result for team member
+        //Let user have optaion to register result for team member
 
 
     }

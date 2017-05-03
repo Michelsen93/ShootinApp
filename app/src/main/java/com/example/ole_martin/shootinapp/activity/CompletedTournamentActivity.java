@@ -5,6 +5,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 
 import com.example.ole_martin.shootinapp.R;
 
@@ -24,6 +26,7 @@ public class CompletedTournamentActivity extends AppCompatActivity {
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
         mDrawerLayout.addDrawerListener(mToggle);
+
         mToggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -36,4 +39,6 @@ public class CompletedTournamentActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

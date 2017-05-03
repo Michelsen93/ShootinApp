@@ -28,7 +28,8 @@
         <activity android:name=".activity.TournamentActivity" />
         <activity android:name=".activity.ShowStatsActivity" />
         <activity android:name=".activity.MyAccountActivity" />
-        <activity android:name=".activity.CompletedTournamentActivity"></activity>
+        <activity android:name=".activity.CompletedTournamentActivity" />
+        <activity android:name=".activity.SettingsActivity"></activity>
     </application>
 
 </manifest>

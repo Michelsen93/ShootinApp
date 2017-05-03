@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 public class PickTounamentActivity extends AppCompatActivity {
     Spinner mSpinner;
+    Spinner mSpinner2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +44,17 @@ public class PickTounamentActivity extends AppCompatActivity {
         //Load tournament to phone
 
         Intent intent = new Intent(this, TournamentActivity.class);
+        startActivity(intent);
+    }
+    public void pickCompletedTournament(){
+
+
+
+        String selected = mSpinner2.getSelectedItem().toString();
+
+        //Load tournament to phone
+
+        Intent intent = new Intent(this, CompletedTournamentActivity.class);
         startActivity(intent);
     }
 }

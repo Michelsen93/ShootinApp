@@ -31,6 +31,29 @@
         android:onClick="pick"
         />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_tournament"
+        android:gravity="center"
+
+        />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pick_completed_tournament"
+        android:gravity="center"
+
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:onClick="pickCompletedTournament"
+        />
+
 
 
 </LinearLayout>

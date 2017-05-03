@@ -26,7 +26,9 @@
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.PickTounamentActivity" />
         <activity android:name=".activity.TournamentActivity" />
-        <activity android:name=".activity.ShowStatsActivity"></activity>
+        <activity android:name=".activity.ShowStatsActivity" />
+        <activity android:name=".activity.MyAccountActivity" />
+        <activity android:name=".activity.CompletedTournamentActivity"></activity>
     </application>
 
 </manifest>

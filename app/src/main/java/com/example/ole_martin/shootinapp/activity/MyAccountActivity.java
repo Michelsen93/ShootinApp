@@ -29,8 +29,10 @@ public class MyAccountActivity extends AppCompatActivity {
 
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-/**
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -39,18 +41,31 @@ public class MyAccountActivity extends AppCompatActivity {
                     Intent a = new Intent(getBaseContext(), MyAccountActivity.class);
                     startActivity(a);
 
-                }
-                else if (id == R.id.nav_settings)
-                {
+                } else if (id == R.id.nav_settings) {
+                    Intent b = new Intent(getBaseContext(), SettingsActivity.class);
+                    startActivity(b);
 
+                } else if(id == R.id.nav_live) {
+                    Intent c = new Intent(getBaseContext(), ShowStatsActivity.class);
+                    startActivity(c);
+
+                } else if (id == R.id.nav_registration){
+                    //allready on the activity no action needed?
+                    Intent c = new Intent(getBaseContext(), TournamentActivity.class);
+                    startActivity(c);
 
                 }
                 return true;
             }
         } );
- **/
-        //TODO - Fetch user, display stats, Allow to click and view
+
+
+        //Load standplasses and let user pick one to register result
+        //Let user have optaion to register result for team member
+
+
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(mToggle.onOptionsItemSelected(item)){
@@ -59,4 +74,5 @@ public class MyAccountActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

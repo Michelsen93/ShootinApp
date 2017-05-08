@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Shooters App</string>
+    <string name="DB_NAME">example</string>
     <string name="wifi_status_on">WiFi enabled</string>
     <string name="turn_on_wifi_message">Error: please enable WiFi</string>
     <string name="username">username</string>

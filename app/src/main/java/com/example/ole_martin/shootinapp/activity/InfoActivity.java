@@ -10,24 +10,22 @@ import android.view.MenuItem;
 
 import com.example.ole_martin.shootinapp.R;
 
-public class TournamentActivity extends AppCompatActivity {
-
+public class InfoActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tournament);
+        setContentView(R.layout.activity_info);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.tournament_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.info_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //Sets up navigationDrawer with clicks
+
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
             @Override
@@ -54,21 +52,5 @@ public class TournamentActivity extends AppCompatActivity {
                 return true;
             }
         } );
-
-
-        //Load standplasses and let user pick one to register result
-        //Let user have optaion to register result for team member
-
-
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if(mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

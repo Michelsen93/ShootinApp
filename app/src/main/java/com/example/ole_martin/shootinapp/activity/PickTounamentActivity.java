@@ -120,7 +120,7 @@ public class PickTounamentActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("tournament_id", selected);
         editor.commit();
-        Intent intent = new Intent(this, TournamentActivity.class);
+        Intent intent = new Intent(this, InfoActivity.class);
         startActivity(intent);
     }
     public void testCBL(View view){

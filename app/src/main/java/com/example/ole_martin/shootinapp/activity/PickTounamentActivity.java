@@ -1,7 +1,9 @@
 package com.example.ole_martin.shootinapp.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -33,11 +35,12 @@ public class PickTounamentActivity extends AppCompatActivity {
     Spinner mSpinner2;
     Manager mManager = null;
     Database mDatabase = null;
+    Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_tounament);
-        //TODO - load db
+        mContext = this;
         setUpCBL();
         try {
             startReplications();
@@ -47,14 +50,39 @@ public class PickTounamentActivity extends AppCompatActivity {
 
 
         mSpinner = (Spinner) findViewById(R.id.pick_tournament);
-        ArrayList<String> tournamentList = new ArrayList<String>();
-        //TODO - Load content to list
-        tournamentList.add("t1");
-        tournamentList.add("t2");
+        ArrayList<String> tournamentList = fillActive();
+
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, tournamentList);
         mSpinner.setAdapter(adp);
     }
 
+    public ArrayList<String> fillActive(){
+        ArrayList<String> activeTournaments = new ArrayList<String>();
+
+        Query query = mDatabase.createAllDocumentsQuery();
+        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
+
+        try {
+            QueryEnumerator result = query.run();
+
+            for (Iterator<QueryRow> it = result; it.hasNext(); ) {
+                QueryRow row = it.next();
+                Document d = row.getDocument();
+                Map<String, Object> current = d.getProperties();
+
+                if(current.get("klasse").equals("Competition") && (boolean) current.get("active") == true){
+                    activeTournaments.add(Integer.toString((Integer) current.get("competitionNumber")));
+                }
+            }
+
+        }catch (Exception e){
+            Toast.makeText(this, "feil", Toast.LENGTH_LONG).show();
+        }
+
+
+
+        return activeTournaments;
+    }
 
     public void pick(View view){
         /**
@@ -66,8 +94,12 @@ public class PickTounamentActivity extends AppCompatActivity {
 
         String selected = mSpinner.getSelectedItem().toString();
 
-        //Load tournament to phone
 
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("tournament_id", selected);
+        editor.commit();
         Intent intent = new Intent(this, TournamentActivity.class);
         startActivity(intent);
     }
@@ -127,7 +159,7 @@ public class PickTounamentActivity extends AppCompatActivity {
 
     public URL createSyncURL(boolean isEncrypted){
         URL syncURL = null;
-        String host = "http://158.37.228.126";
+        String host = "http://158.37.228.221";
         String port = "4984";
         String dbName = getResources().getString(R.string.DB_NAME);
         try {

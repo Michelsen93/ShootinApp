@@ -21,6 +21,7 @@ import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.replicator.Replication;
+import com.example.ole_martin.shootinapp.Java_Classes.Competition;
 import com.example.ole_martin.shootinapp.R;
 
 import java.io.IOException;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+
+//TODO - load old tournaments to mSpinner2
 public class PickTounamentActivity extends AppCompatActivity {
     Spinner mSpinner;
     Spinner mSpinner2;
@@ -93,7 +96,24 @@ public class PickTounamentActivity extends AppCompatActivity {
          */
 
         String selected = mSpinner.getSelectedItem().toString();
-
+        //get doc id from db
+        Query query = mDatabase.createAllDocumentsQuery();
+        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
+        String docId = "";
+        try {
+            QueryEnumerator result = query.run();
+            for (Iterator<QueryRow> it = result; it.hasNext(); ) {
+                QueryRow row = it.next();
+                Document d = row.getDocument();
+                Map<String, Object> current = d.getProperties();
+                if(current.get("klasse").equals("Competition") && (int) current.get("competitionNumber") == Integer.parseInt(selected)){
+                    docId = (String) current.get("_id");
+                    break;
+                }
+            }
+        }catch (Exception e){
+            Toast.makeText(this, "feil", Toast.LENGTH_LONG).show();
+        }
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preferences), Context.MODE_PRIVATE);

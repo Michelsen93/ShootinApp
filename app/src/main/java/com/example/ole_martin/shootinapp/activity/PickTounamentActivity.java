@@ -123,34 +123,7 @@ public class PickTounamentActivity extends AppCompatActivity {
         Intent intent = new Intent(this, InfoActivity.class);
         startActivity(intent);
     }
-    public void testCBL(View view){
-        Query query = mDatabase.createAllDocumentsQuery();
-        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
 
-        try {
-            QueryEnumerator result = query.run();
-            TextView tv = (TextView) findViewById(R.id.tv);
-            String ttt = "";
-            for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-                QueryRow row = it.next();
-
-
-                Document d = row.getDocument();
-                Map<String, Object> current = d.getProperties();
-                String tester = (String) current.get("klasse");
-                if(tester.equals("Club")){
-                    ttt += current.get("name").toString();
-                }
-
-
-                //Check if d ha values
-
-            }
-            tv.setText(ttt);
-        }catch (Exception e){
-            Toast.makeText(this, "feil", Toast.LENGTH_LONG).show();
-        }
-    }
 
     public void pickCompletedTournament(){
 

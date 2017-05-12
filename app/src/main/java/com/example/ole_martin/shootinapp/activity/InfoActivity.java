@@ -11,14 +11,17 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
+import com.couchbase.lite.android.AndroidContext;
 import com.example.ole_martin.shootinapp.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,8 +37,9 @@ public class InfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
-        //TODO - set up DB
 
+        setUpCBL();
+        loadView();
 
         mContext = this;
         mDrawerLayout = (DrawerLayout) findViewById(R.id.info_layout);
@@ -81,5 +85,31 @@ public class InfoActivity extends AppCompatActivity {
         String t_id = sharedPref.getString("tournament_id", "none");
         Document d = mDatabase.getExistingDocument(t_id);
         return d.getProperties();
+    }
+
+    public void loadView(){
+        Map<String, Object> tournament = findCurrentTournament();
+        //TODO - Find group of logged in guy
+        Map<String, Object> team = findGroup();
+    }
+    public Map<String, Object> findTeam(Map<String, Object> tournament){
+        //TODO - Get user from preferences
+        String user = "Find the user from preferences";
+        Map<String, Object> teams = (Map<String, Object>) tournament.get("teams");
+        for(Object team : teams.values()){
+
+        }
+
+    }
+
+    public void setUpCBL(){
+        try{
+            mManager = new Manager(new AndroidContext(this), Manager.DEFAULT_OPTIONS);
+            mDatabase = mManager.getDatabase(getResources().getString(R.string.DB_NAME));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -146,8 +146,6 @@ public class PickTounamentActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-
-        //Start pull replication
     }
 
     public URL createSyncURL(boolean isEncrypted){

@@ -150,7 +150,7 @@ public class PickTounamentActivity extends AppCompatActivity {
 
     public URL createSyncURL(boolean isEncrypted){
         URL syncURL = null;
-        String host = "http://158.37.228.221";
+        String host = "http://localhost";
         String port = "4984";
         String dbName = getResources().getString(R.string.DB_NAME);
         try {
@@ -162,7 +162,7 @@ public class PickTounamentActivity extends AppCompatActivity {
     }
     private void startReplications() throws CouchbaseLiteException {
         final Replication pull = mDatabase.createPullReplication(this.createSyncURL(false));
-        final ProgressDialog progressDialog = ProgressDialog.show(this, "Please wait ...", "Syncing", false);
+        final ProgressDialog progressDialog = ProgressDialog.show(this, "Henter data...", "Synkroniserer", false);
         pull.addChangeListener(new Replication.ChangeListener() {
             @Override
             public void changed(Replication.ChangeEvent event) {

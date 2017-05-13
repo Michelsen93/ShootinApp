@@ -28,12 +28,12 @@ public class LoginActivity extends AppCompatActivity {
 
     public void logIn(String userName, String password){
         //TODO - lag log inn sjekk og sånt
-        if(Checker.checkLogin(userName, password)){
+        if(Checker.checkLogin(userName, password, this)){
             // start activity
             Intent intent = new Intent(this, PickTounamentActivity.class);
             startActivity(intent);
         }else{
-            //display error message, try again
+            Toast.makeText(this, "Fant ikke brukeren prøv igjen...", Toast.LENGTH_LONG).show();
         }
 
     }

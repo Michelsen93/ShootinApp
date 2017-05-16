@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ole_martin.shootinapp.activity.TournamentActivity"
+    tools:context="com.example.ole_martin.shootinapp.activity.InformationActivity"
     android:id="@+id/info_layout"
     >
 
@@ -35,8 +35,14 @@
             >
 
 
-        </LinearLayout>
 
+        </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:onClick="goToRegisterActivity"
+            />
 
 
     </LinearLayout>

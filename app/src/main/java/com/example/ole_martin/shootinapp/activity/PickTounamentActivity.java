@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -21,7 +20,6 @@ import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.replicator.Replication;
-import com.example.ole_martin.shootinapp.Java_Classes.Competition;
 import com.example.ole_martin.shootinapp.R;
 
 import java.io.IOException;
@@ -74,7 +72,7 @@ public class PickTounamentActivity extends AppCompatActivity {
                 Map<String, Object> current = d.getProperties();
 
                 if(current.get("klasse").equals("Competition") && (boolean) current.get("active") == true){
-                    activeTournaments.add(Integer.toString((Integer) current.get("competitionNumber")));
+                    activeTournaments.add((String) current.get("competitionNumber"));
                 }
             }
 
@@ -106,7 +104,7 @@ public class PickTounamentActivity extends AppCompatActivity {
                 QueryRow row = it.next();
                 Document d = row.getDocument();
                 Map<String, Object> current = d.getProperties();
-                if(current.get("klasse").equals("Competition") && (int) current.get("competitionNumber") == Integer.parseInt(selected)){
+                if(current.get("klasse").equals("Competition") && current.get("competitionNumber").equals(selected)){
                     docId = (String) current.get("_id");
                     break;
                 }
@@ -118,10 +116,12 @@ public class PickTounamentActivity extends AppCompatActivity {
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 getString(R.string.preferences), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("tournament_id", selected);
+        editor.putString("tournament_id", docId);
         editor.commit();
-        Intent intent = new Intent(this, InfoActivity.class);
+
+        Intent intent = new Intent(getBaseContext(), InformationActivity.class);
         startActivity(intent);
+
     }
 
 
@@ -150,7 +150,7 @@ public class PickTounamentActivity extends AppCompatActivity {
 
     public URL createSyncURL(boolean isEncrypted){
         URL syncURL = null;
-        String host = "http://localhost";
+        String host = "http://158.37.227.101";
         String port = "4984";
         String dbName = getResources().getString(R.string.DB_NAME);
         try {

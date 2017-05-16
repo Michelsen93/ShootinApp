@@ -9,39 +9,40 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
-
+import android.view.View;
+import android.widget.TextView;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
-import com.couchbase.lite.Query;
-import com.couchbase.lite.QueryEnumerator;
-import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
+import com.couchbase.lite.replicator.Replication;
 import com.example.ole_martin.shootinapp.R;
-
+import com.example.ole_martin.shootinapp.util.DAO;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
-public class InfoActivity extends AppCompatActivity {
-    Manager mManager = null;
-    Database mDatabase = null;
+public class InformationActivity extends AppCompatActivity {
+
+    private Database mDatabase;
+    private Manager mManager;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
-    Context mContext;
+    private Context mContext;
+    DAO mDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_info);
-
-        setUpCBL();
-        loadView();
-
+        setContentView(R.layout.activity_information);
         mContext = this;
+        setUpCBL();
+
+
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.info_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
@@ -75,41 +76,94 @@ public class InfoActivity extends AppCompatActivity {
                 return true;
             }
         } );
+        startTheView();
 
-        Map<String, Object> currentTournament = findCurrentTournament();
     }
 
-    public Map<String, Object> findCurrentTournament(){
+
+    //Dette funker ikke de må sikkert ikke være static
+    public void startTheView(){
+        Map<String, Object> tournament = getCurrentCompetition();
+        Map<String, Object> team = findTeam();
+        String date = (String) tournament.get("date");
+        TextView tv2 = (TextView) findViewById(R.id.timeView);
+        tv2.setText(date);
+        //display team
+        //display standplasses
+
+    }
+
+    public void goToRegisterActivity(View view){
+        Intent intent = new Intent(this, TournamentActivity.class);
+        startActivity(intent);
+    }
+
+    public Map<String, Object> getCurrentCompetition(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preferences), Context.MODE_PRIVATE);
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
         String t_id = sharedPref.getString("tournament_id", "none");
         Document d = mDatabase.getExistingDocument(t_id);
         return d.getProperties();
     }
-
-    public void loadView(){
-        Map<String, Object> tournament = findCurrentTournament();
-        //TODO - Find group of logged in guy
-        Map<String, Object> team = findGroup();
-    }
-    public Map<String, Object> findTeam(Map<String, Object> tournament){
+    public Map<String, Object> findTeam(){
         //TODO - Get user from preferences
-        String user = "Find the user from preferences";
-        Map<String, Object> teams = (Map<String, Object>) tournament.get("teams");
-        for(Object team : teams.values()){
+        Map<String, Object> tournament = getCurrentCompetition();
 
+        ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
+        Map<String, Object> user = getCurrentUser();
+        for(Object team : teams){
+            ArrayList<Object> curTeam = (ArrayList<Object>) team;
+            for(Object member : curTeam){
+                Object cureMember = member;
+                //if(member..equals(user.get("mail"))){
+
+                //}
+            }
+
+            return null;
         }
 
+        return null;
     }
 
+    public Map<String, Object> getCurrentUser(){
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String user_id = sharedPref.getString("user", "none");
+        Document d = mDatabase.getExistingDocument(user_id);
+        return d.getProperties();
+    }
     public void setUpCBL(){
+
         try{
-            mManager = new Manager(new AndroidContext(this), Manager.DEFAULT_OPTIONS);
-            mDatabase = mManager.getDatabase(getResources().getString(R.string.DB_NAME));
+            mManager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
+            mDatabase = mManager.getDatabase(mContext.getResources().getString(R.string.DB_NAME));
+            startPullReplication();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
+
     }
+    public void startPullReplication() throws CouchbaseLiteException {
+        Replication pull = mDatabase.createPullReplication(this.createSyncURL(false));
+        pull.start();
+    }
+    public URL createSyncURL(boolean isEncrypted){
+        URL syncURL = null;
+        String host = "http://158.37.227.101";
+        String port = "4984";
+        String dbName = mContext.getResources().getString(R.string.DB_NAME);
+        try {
+            syncURL = new URL(host + ":" + port + "/" + dbName);
+        } catch (MalformedURLException me) {
+            me.printStackTrace();
+        }
+        return syncURL;
+    }
+
+
+
+
 }

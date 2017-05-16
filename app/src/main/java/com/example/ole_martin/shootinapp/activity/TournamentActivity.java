@@ -1,6 +1,9 @@
 package com.example.ole_martin.shootinapp.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -8,10 +11,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.Manager;
+import com.couchbase.lite.android.AndroidContext;
+import com.couchbase.lite.replicator.Replication;
 import com.example.ole_martin.shootinapp.R;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class TournamentActivity extends AppCompatActivity {
 
+    private Context mContext;
+    private Database mDatabase;
+    private Manager mManager;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
@@ -20,7 +38,8 @@ public class TournamentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournament);
-
+        mContext = this;
+        setUpCBL();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.tournament_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
 
@@ -55,6 +74,7 @@ public class TournamentActivity extends AppCompatActivity {
             }
         } );
 
+        getStandplasses();
 
         //Load standplasses and let user pick one to register result
         //Let user have optaion to register result for team member
@@ -70,5 +90,62 @@ public class TournamentActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void getStandplasses(){
+        Map<String, Object> currentCompetition = getCurrentCompetition();
+        //get standplasses
+        ArrayList<Map<String, Object>> standplasses = (ArrayList<Map<String, Object>>) currentCompetition.get("standplasses");
+
+        for(Map<String, Object> standplass :  standplasses){
+            //Display standplasses to view
+            // has key: $ref, value docid
+            //get existing document with docid
+            String asd =(String) standplass.get("$ref");
+            Document curStandplass = mDatabase.getExistingDocument(asd);
+            String as123 = "";
+            //Map<String, Object> asdasd = curStandplass.getProperties();
+
+        }
+        //load the to view
+
+    }
+
+    public void setUpCBL(){
+
+        try{
+            mManager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
+            mDatabase = mManager.getDatabase(mContext.getResources().getString(R.string.DB_NAME));
+            startPullReplication();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Map<String, Object> getCurrentCompetition(){
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String t_id = sharedPref.getString("tournament_id", "none");
+        Document d = mDatabase.getExistingDocument(t_id);
+        return d.getProperties();
+    }
+    public void startPullReplication() throws CouchbaseLiteException {
+        Replication pull = mDatabase.createPullReplication(this.createSyncURL(false));
+        pull.start();
+    }
+    public URL createSyncURL(boolean isEncrypted){
+        URL syncURL = null;
+        String host = "http://158.37.227.101";
+        String port = "4984";
+        String dbName = mContext.getResources().getString(R.string.DB_NAME);
+        try {
+            syncURL = new URL(host + ":" + port + "/" + dbName);
+        } catch (MalformedURLException me) {
+            me.printStackTrace();
+        }
+        return syncURL;
     }
 }

@@ -25,15 +25,20 @@ import java.util.Map;
 public class Checker {
     public static boolean checkLogin(String username, String password, Context context){
         //TODO - check if password matches username
+        boolean ss = false;
         try{
             Manager mManager = new Manager(new AndroidContext(context), Manager.DEFAULT_OPTIONS);
             Database mDatabase = mManager.getDatabase(context.getResources().getString(R.string.DB_NAME));
+            ss = validateUser(mDatabase, username, password, context);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-        return true;
+
+
+        return ss;
     }
 
     /**
@@ -44,7 +49,7 @@ public class Checker {
      * @param context
      * @return
      */
-    public boolean validateUser(Database database, String username, String password, Context context){
+    public static boolean validateUser(Database database, String username, String password, Context context){
     //TODO - find user
     Query query = database.createAllDocumentsQuery();
     query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);

@@ -2,6 +2,7 @@ package com.example.ole_martin.shootinapp.util;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -31,8 +32,9 @@ import java.util.Map;
 
 
 public class DAO {
-    public static Database mDatabase;
-    public static Manager mManager;
+    public Database mDatabase;
+    public Manager mManager;
+    public Context mContext;
 
 
 
@@ -41,10 +43,11 @@ public class DAO {
 
     }
     public void setUpCBL(Context context){
+        mContext = context;
         try{
-            mManager = new Manager(new AndroidContext(context), Manager.DEFAULT_OPTIONS);
+            mManager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
             mDatabase = mManager.getDatabase(context.getResources().getString(R.string.DB_NAME));
-            startPullReplication(context);
+            startPullReplication();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {
@@ -53,11 +56,11 @@ public class DAO {
 
     }
 
-    public URL createSyncURL(boolean isEncrypted, Context context){
+    public URL createSyncURL(boolean isEncrypted){
         URL syncURL = null;
-        String host = "http://localhost";
+        String host = "http://158.37.227.101";
         String port = "4984";
-        String dbName = context.getResources().getString(R.string.DB_NAME);
+        String dbName = mContext.getResources().getString(R.string.DB_NAME);
         try {
             syncURL = new URL(host + ":" + port + "/" + dbName);
         } catch (MalformedURLException me) {
@@ -65,8 +68,8 @@ public class DAO {
         }
         return syncURL;
     }
-    public void startPullReplication(Context context) throws CouchbaseLiteException {
-        Replication pull = mDatabase.createPullReplication(this.createSyncURL(false, context));
+    public void startPullReplication() throws CouchbaseLiteException {
+        Replication pull = mDatabase.createPullReplication(this.createSyncURL(false));
         pull.start();
     }
 
@@ -91,9 +94,40 @@ public class DAO {
     }
 
     public Map<String, Object> getCurrentCompetition(){
-        Map<String, Object> currentCompetition;
-        //TODO - load competition from preferences and return it...
-        return currentCompetition;
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String t_id = sharedPref.getString("tournament_id", "none");
+        Document d = mDatabase.getExistingDocument(t_id);
+        return d.getProperties();
+    }
+
+    public Map<String, Object> findTeam(){
+        //TODO - Get user from preferences
+        Map<String, Object> tournament = getCurrentCompetition();
+
+        Map<String, Object> teams = (Map<String, Object>) tournament.get("teams");
+        Map<String, Object> user = getCurrentUser(mContext);
+        for(Map.Entry<String, Object> team : teams.entrySet()){
+            Map<String, Object> curTeam = (Map<String, Object>)team.getValue();
+            for(Map.Entry<String, Object> member :  curTeam.entrySet()){
+                Map<String, Object> curMember = (Map<String, Object>) member.getValue();
+                if(curMember.get("mail").equals(user.get("mail"))){
+                    return curTeam;
+                }
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+
+    public Map<String, Object> getCurrentUser(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                context.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String user_id = sharedPref.getString("user", "none");
+        Document d = mDatabase.getExistingDocument(user_id);
+        return d.getProperties();
     }
 
 

@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -94,19 +95,17 @@ public class TournamentActivity extends AppCompatActivity {
 
     public void getStandplasses(){
         Map<String, Object> currentCompetition = getCurrentCompetition();
-        //get standplasses
         ArrayList<Map<String, Object>> standplasses = (ArrayList<Map<String, Object>>) currentCompetition.get("standplasses");
-
+        String standString ="";
         for(Map<String, Object> standplass :  standplasses){
-            //Display standplasses to view
-            // has key: $ref, value docid
-            //get existing document with docid
-            String asd =(String) standplass.get("$ref");
-            Document curStandplass = mDatabase.getExistingDocument(asd);
-            String as123 = "";
-            //Map<String, Object> asdasd = curStandplass.getProperties();
-
+            String asd ="Standplass|" + standplass.get("$ref");
+            Document d = mDatabase.getExistingDocument(asd);
+            Map<String, Object> curStandplass = d.getProperties();
+            standString += curStandplass.get("name") + ", ";
+            // Dette skal være knapper som du kan trykke på. Med dette skal du kunne velge person, deretter registrere resultat
         }
+        TextView tv = (TextView) findViewById(R.id.hhh);
+        tv.setText(standString);
         //load the to view
 
     }

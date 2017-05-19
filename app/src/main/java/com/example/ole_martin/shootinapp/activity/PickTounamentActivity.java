@@ -119,7 +119,7 @@ public class PickTounamentActivity extends AppCompatActivity {
         editor.putString("tournament_id", docId);
         editor.commit();
 
-        Intent intent = new Intent(getBaseContext(), InformationActivity.class);
+        Intent intent = new Intent(this, InformationActivity.class);
         startActivity(intent);
 
     }

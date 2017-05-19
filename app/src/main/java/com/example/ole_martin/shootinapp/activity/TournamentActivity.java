@@ -138,7 +138,7 @@ public class TournamentActivity extends AppCompatActivity {
     }
     public URL createSyncURL(boolean isEncrypted){
         URL syncURL = null;
-        String host = "http://158.37.227.101";
+        String host = "http://" + getResources().getString(R.string.ip_address);
         String port = "4984";
         String dbName = mContext.getResources().getString(R.string.DB_NAME);
         try {

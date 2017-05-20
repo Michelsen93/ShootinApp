@@ -3,13 +3,22 @@ package com.example.ole_martin.shootinapp.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.Layout;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -24,26 +33,32 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TournamentActivity extends AppCompatActivity {
-
+    private Map<String, Object> mStandplasses;
+    private ArrayList<Map<String, Object>> mTeam;
     private Context mContext;
     private Database mDatabase;
     private Manager mManager;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
+    private Spinner mSpinner;
+
+    //TODO - Get team store in map
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournament);
         mContext = this;
+        mStandplasses = new HashMap<String, Object>();
         setUpCBL();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.tournament_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-
+        mSpinner = (Spinner) findViewById(R.id.person_spinner);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -76,7 +91,7 @@ public class TournamentActivity extends AppCompatActivity {
         } );
 
         getStandplasses();
-
+        fillSpinner();
         //Load standplasses and let user pick one to register result
         //Let user have optaion to register result for team member
 
@@ -93,21 +108,61 @@ public class TournamentActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void fillSpinner(){
+        mTeam = findTeam();
+        ArrayList<String> memberList = new ArrayList<String>();
+
+
+        for(Map<String, Object> member : mTeam){
+            memberList.add((String) member.get("firstName") + " " + member.get("lastName"));
+        }
+        ArrayAdapter<String> adp = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, memberList);
+    }
+
     public void getStandplasses(){
         Map<String, Object> currentCompetition = getCurrentCompetition();
         ArrayList<Map<String, Object>> standplasses = (ArrayList<Map<String, Object>>) currentCompetition.get("standplasses");
-        String standString ="";
         for(Map<String, Object> standplass :  standplasses){
             String asd ="Standplass|" + standplass.get("$ref");
             Document d = mDatabase.getExistingDocument(asd);
             Map<String, Object> curStandplass = d.getProperties();
-            standString += curStandplass.get("name") + ", ";
+            //Map values to show key = name, value = object
+            mStandplasses.put((String) curStandplass.get("name"), curStandplass);
+            Button button = new Button(this);
+            button.setText((String) curStandplass.get("name"));
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    showRegisterResult(v);
+                }
+            });
+
+            LinearLayout layout = (LinearLayout) findViewById(R.id.standplasses);
+            layout.addView(button);
+
+
+
+
             // Dette skal være knapper som du kan trykke på. Med dette skal du kunne velge person, deretter registrere resultat
         }
-        TextView tv = (TextView) findViewById(R.id.hhh);
-        tv.setText(standString);
+
         //load the to view
 
+    }
+
+    /*
+    ColorDrawable buttonColor = (ColorDrawable) v.getBackground();
+        if(buttonColor.getColor() == Color.GREEN){
+            v.setBackgroundColor(Color.YELLOW);
+        }
+     */
+
+    public void showRegisterResult(View v){
+        //color selected green
+        v.setBackgroundColor(Color.GREEN);
+        //Save teamMember key to value
+
+        //Save standplass key to value
+        //Display register thing
     }
 
     public void setUpCBL(){
@@ -146,5 +201,31 @@ public class TournamentActivity extends AppCompatActivity {
             me.printStackTrace();
         }
         return syncURL;
+    }
+    public ArrayList<Map<String,Object>> findTeam(){
+        //TODO - Get user from preferences
+        Map<String, Object> tournament = getCurrentCompetition();
+
+        ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
+        Map<String, Object> user = getCurrentUser();
+        for(Object team : teams){
+            ArrayList<Map<String, Object>> curTeam = (ArrayList<Map<String, Object>>) team;
+            for(Map<String, Object> member : curTeam){
+                if(member.get("mail").equals(user.get("mail"))){
+                    return curTeam;
+                }
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+    public Map<String, Object> getCurrentUser(){
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String user_id = sharedPref.getString("user", "none");
+        Document d = mDatabase.getExistingDocument(user_id);
+        return d.getProperties();
     }
 }

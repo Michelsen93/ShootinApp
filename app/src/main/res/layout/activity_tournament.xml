@@ -8,11 +8,7 @@
     android:id="@+id/tournament_layout"
     >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        
-    </LinearLayout>
+
     <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -24,12 +20,63 @@
 
     </android.support.design.widget.NavigationView>
     <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/standplasses"
+        android:gravity="center_horizontal"
+        >
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="bottom"
+
+        >
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/hhh"
+            android:id="@+id/picketStandplassName"
+            android:text="Registrer standplass: "
+            android:textSize="20dp"
             />
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/person_spinner"
+            >
+
+        </Spinner>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Treff"
+            android:id="@+id/hits"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Figurer"
+            android:id="@+id/figures"
+            />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Innertreff"
+            android:id="@+id/bullseye"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/register_result"
+            android:text="Registrer resultat"
+            android:textSize="20dp"
+            android:backgroundTint="@color/colorAccent"
+            />
+
+
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

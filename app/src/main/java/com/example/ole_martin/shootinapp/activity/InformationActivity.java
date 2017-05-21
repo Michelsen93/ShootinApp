@@ -136,6 +136,7 @@ public class InformationActivity extends AppCompatActivity {
                 String personId = "Person|" + curMember.get("$ref");
                 Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
                 if(person.get("mail").equals(user.get("mail"))){
+                    //TODO - Save team to preferences
                     return theTeam;
                 }
             }

@@ -205,7 +205,8 @@ public class TournamentActivity extends AppCompatActivity {
         return syncURL;
     }
     public ArrayList<Map<String,Object>> findTeam(){
-        //TODO - Get user from preferences
+        //TODO - This method has to get team id from preferences, then load it for mDatabase
+
         Map<String, Object> tournament = getCurrentCompetition();
 
         ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");

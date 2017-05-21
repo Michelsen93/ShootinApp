@@ -49,8 +49,10 @@ public class DAO {
             mDatabase = mManager.getDatabase(context.getResources().getString(R.string.DB_NAME));
             startPullReplication();
         } catch (IOException e) {
+            Toast.makeText(mContext, "IO feil", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         } catch (CouchbaseLiteException e) {
+            Toast.makeText(mContext, "CLB feil", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 

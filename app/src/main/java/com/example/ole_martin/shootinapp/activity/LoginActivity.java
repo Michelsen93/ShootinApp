@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     public void doLogIn(View view){
         String username = ((EditText)findViewById(R.id.username_input)).getText().toString();
         String password = ((EditText)findViewById(R.id.password_input)).getText().toString();;
-        Toast.makeText(this, username, Toast.LENGTH_LONG).show();
+
         logIn(username, password);
     }
 

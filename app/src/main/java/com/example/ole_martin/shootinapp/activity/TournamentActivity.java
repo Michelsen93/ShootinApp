@@ -158,9 +158,11 @@ public class TournamentActivity extends AppCompatActivity {
 
     public void showRegisterResult(View v){
         //color selected green
+        Button clicked = (Button)v;
         v.setBackgroundColor(Color.GREEN);
         //Save teamMember key to value
-
+        TextView sName = (TextView) findViewById(R.id.nameOfStandplass);
+        sName.setText(clicked.getText());
         //Save standplass key to value
         //Display register thing
     }

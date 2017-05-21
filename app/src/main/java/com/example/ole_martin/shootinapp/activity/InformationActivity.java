@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class InformationActivity extends AppCompatActivity {
@@ -85,12 +86,26 @@ public class InformationActivity extends AppCompatActivity {
     public void startTheView(){
         Map<String, Object> tournament = getCurrentCompetition();
         Map<String, Object> team = findTeam();
-        String date = (String) tournament.get("date");
+
+        String date = (String) team.get("startTime");
         TextView tv2 = (TextView) findViewById(R.id.timeView);
-        tv2.setText(date);
+        tv2.setText(date.toString());
+        displayTeam(team);
         //display team
         //display standplasses
 
+    }
+    public void displayTeam(Map<String, Object> team){
+        ArrayList<Object> members = (ArrayList<Object>)team.get("competitors");
+        String memberNames = "";
+        for(Object member : members) {
+            Map<String, Object> curMember = (Map<String, Object>) member;
+            String personId = "Person|" + curMember.get("$ref");
+            Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
+            memberNames += person.get("firstName") + " " + person.get("lastName") + " , ";
+        }
+        TextView tv = (TextView) findViewById(R.id.deltager_navn);
+        tv.setText(memberNames);
     }
 
     public void goToRegisterActivity(View view){
@@ -112,15 +127,18 @@ public class InformationActivity extends AppCompatActivity {
         ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
         Map<String, Object> user = getCurrentUser();
         for(Object team : teams){
-            ArrayList<Object> curTeam = (ArrayList<Object>) team;
-            for(Object member : curTeam){
-                Object cureMember = member;
-                //if(member..equals(user.get("mail"))){
-
-                //}
+            Map<String, Object> currentTeam = (Map<String, Object>)team;
+            String teamId = "Team|" + currentTeam.get("$ref");
+            Map<String, Object> theTeam = mDatabase.getExistingDocument(teamId).getProperties();
+            ArrayList<Object> members = (ArrayList<Object>)theTeam.get("competitors");
+            for(Object member : members){
+                Map<String, Object> curMember = (Map<String, Object>) member;
+                String personId = "Person|" + curMember.get("$ref");
+                Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
+                if(person.get("mail").equals(user.get("mail"))){
+                    return theTeam;
+                }
             }
-
-            return null;
         }
 
         return null;

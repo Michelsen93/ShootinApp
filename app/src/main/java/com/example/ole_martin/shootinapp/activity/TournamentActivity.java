@@ -38,7 +38,7 @@ import java.util.Map;
 
 public class TournamentActivity extends AppCompatActivity {
     private Map<String, Object> mStandplasses;
-    private ArrayList<Map<String, Object>> mTeam;
+    private Map<String, Object> mTeam;
     private Context mContext;
     private Database mDatabase;
     private Manager mManager;
@@ -113,10 +113,14 @@ public class TournamentActivity extends AppCompatActivity {
         ArrayList<String> memberList = new ArrayList<String>();
 
 
-        for(Map<String, Object> member : mTeam){
-            memberList.add((String) member.get("firstName") + " " + member.get("lastName"));
+        for(Map<String, Object> member : (ArrayList<Map<String, Object>>)mTeam.get("competitors")){
+            String personId = "Person|" + member.get("$ref");
+            Map<String, Object> theMember = mDatabase.getExistingDocument(personId).getProperties();
+
+            memberList.add((String) theMember.get("firstName") + " " + theMember.get("lastName"));
         }
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, memberList);
+        mSpinner.setAdapter(adp);
     }
 
     public void getStandplasses(){
@@ -158,11 +162,15 @@ public class TournamentActivity extends AppCompatActivity {
 
     public void showRegisterResult(View v){
         //color selected green
+        LinearLayout ll = (LinearLayout) findViewById(R.id.result_form);
+        ll.setVisibility(View.VISIBLE);
         Button clicked = (Button)v;
         v.setBackgroundColor(Color.GREEN);
         //Save teamMember key to value
         TextView sName = (TextView) findViewById(R.id.nameOfStandplass);
         sName.setText(clicked.getText());
+
+
         //Save standplass key to value
         //Display register thing
     }
@@ -204,25 +212,15 @@ public class TournamentActivity extends AppCompatActivity {
         }
         return syncURL;
     }
-    public ArrayList<Map<String,Object>> findTeam(){
+    public Map<String, Object> findTeam(){
         //TODO - This method has to get team id from preferences, then load it for mDatabase
+        SharedPreferences sharedPref = mContext.getSharedPreferences(
+                mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
+        String user_id = sharedPref.getString("team_id", "none");
+        Document d = mDatabase.getExistingDocument(user_id);
+        return d.getProperties();
 
-        Map<String, Object> tournament = getCurrentCompetition();
 
-        ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
-        Map<String, Object> user = getCurrentUser();
-        for(Object team : teams){
-            ArrayList<Map<String, Object>> curTeam = (ArrayList<Map<String, Object>>) team;
-            for(Map<String, Object> member : curTeam){
-                if(member.get("mail").equals(user.get("mail"))){
-                    return curTeam;
-                }
-            }
-
-            return null;
-        }
-
-        return null;
     }
     public Map<String, Object> getCurrentUser(){
         SharedPreferences sharedPref = mContext.getSharedPreferences(

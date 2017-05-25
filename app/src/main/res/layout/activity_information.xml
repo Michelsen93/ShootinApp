@@ -27,6 +27,28 @@
             android:layout_height="wrap_content"
             android:text="Deltakere:"
             />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/member_form"
+            android:stretchColumns="*"
+            >
+
+            <TableRow>
+                <TextView
+                    android:text="Navn"
+                    />
+                <TextView
+                    android:text="Klasse"
+                    />
+                <TextView
+                    android:text="Gruppe"
+                    />
+
+            </TableRow>
+
+        </TableLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,7 +67,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Gå til registrering"
+            android:text="Start ny runde"
             android:onClick="goToRegisterActivity"
             />
 

@@ -17,6 +17,7 @@ import com.example.ole_martin.shootinapp.R;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by ole-martin on 28.04.2017.
@@ -40,6 +41,8 @@ public class Checker {
 
         return ss;
     }
+
+
 
     /**
      * If credentials are correct, returns true and saves doc_id to preferences
@@ -77,5 +80,9 @@ public class Checker {
     //TODO - Check password match
     //TODO - Save user to preferences
     return false;
+    }
+
+    public static String generateUUid(){
+        return UUID.randomUUID().toString();
     }
 }

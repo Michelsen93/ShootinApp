@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
@@ -17,16 +18,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryEnumerator;
+import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.replicator.Replication;
+import com.example.ole_martin.shootinapp.Java_Classes.Scorecard;
 import com.example.ole_martin.shootinapp.R;
 
 import java.io.IOException;
@@ -34,10 +41,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class TournamentActivity extends AppCompatActivity {
-    private Map<String, Object> mStandplasses;
+    private Map<String, Map<String, Object>> mStandplasses;
     private Map<String, Object> mTeam;
     private Context mContext;
     private Database mDatabase;
@@ -46,6 +54,10 @@ public class TournamentActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
     private Spinner mSpinner;
+    private EditText mFigures;
+    private EditText mHits;
+    private EditText mBullseyes;
+
 
     //TODO - Get team store in map
 
@@ -53,8 +65,14 @@ public class TournamentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournament);
+        mFigures = (EditText) findViewById(R.id.figures);
+        mHits = (EditText) findViewById(R.id.hits);
+        mBullseyes = (EditText) findViewById(R.id.bullseye);
+        mFigures.setTransformationMethod(null);
+        mHits.setTransformationMethod(null);
+        mBullseyes.setTransformationMethod(null);
         mContext = this;
-        mStandplasses = new HashMap<String, Object>();
+        mStandplasses = new HashMap<String, Map<String, Object>>();
         setUpCBL();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.tournament_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
@@ -111,12 +129,9 @@ public class TournamentActivity extends AppCompatActivity {
     public void fillSpinner(){
         mTeam = findTeam();
         ArrayList<String> memberList = new ArrayList<String>();
-
-
         for(Map<String, Object> member : (ArrayList<Map<String, Object>>)mTeam.get("competitors")){
             String personId = "Person|" + member.get("$ref");
             Map<String, Object> theMember = mDatabase.getExistingDocument(personId).getProperties();
-
             memberList.add((String) theMember.get("firstName") + " " + theMember.get("lastName"));
         }
         ArrayAdapter<String> adp = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, memberList);
@@ -164,11 +179,16 @@ public class TournamentActivity extends AppCompatActivity {
         //color selected green
         LinearLayout ll = (LinearLayout) findViewById(R.id.result_form);
         ll.setVisibility(View.VISIBLE);
+        LinearLayout standplassesLayout = (LinearLayout) findViewById(R.id.standplasses);
         Button clicked = (Button)v;
-        v.setBackgroundColor(Color.GREEN);
+        for(int i = 0; i < standplassesLayout.getChildCount(); i++){
+            Button aButton = (Button) ll.getChildAt(i);
+            aButton.getBackground().clearColorFilter();
+        }
+        v.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
         //Save teamMember key to value
-        TextView sName = (TextView) findViewById(R.id.nameOfStandplass);
-        sName.setText(clicked.getText());
+        TextView standplassName = (TextView) findViewById(R.id.nameOfStandplass);
+        standplassName.setText(clicked.getText());
 
 
         //Save standplass key to value
@@ -187,6 +207,88 @@ public class TournamentActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public void registerResult(View view){
+        //get input of textviews
+        String name = mSpinner.getSelectedItem().toString();
+        //standplassname, hits, figures, bullseye
+        TextView standplassnm = (TextView) findViewById(R.id.nameOfStandplass);
+        String standplassName = standplassnm.getText().toString();
+        if(!isEmpty(mHits) && !isEmpty(mFigures)){
+            int bullseyes;
+            if(isEmpty(mBullseyes)){
+                bullseyes=0;
+            } else{
+                bullseyes = Integer.parseInt(mBullseyes.getText().toString());
+            }
+            int hits = Integer.parseInt(mHits.getText().toString());
+            int figures = Integer.parseInt(mFigures.getText().toString());
+            Document personDoc = getDocOfPerson(name);
+            String standplass = (String) mStandplasses.get(standplassName).get("number");
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("hits", hits);
+            result.put("figures", figures);
+            result.put("bullseyes", bullseyes);
+            result.put("standplass", standplass);
+            Document scoreCard = getScorecardOfPerson(personDoc);
+            HashMap<String, Object> newScorecard = new HashMap<>();
+            newScorecard.putAll(scoreCard.getProperties());
+            ArrayList<Object> results = (ArrayList<Object>) newScorecard.get("results");
+            results.add(result);
+            newScorecard.put("results", results);
+            try {
+                scoreCard.putProperties(newScorecard);
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+            Replication push = mDatabase.createPushReplication(createSyncURL(false));
+            push.start();
+
+
+
+        } else{
+            Toast.makeText(this, "Mangler innput", Toast.LENGTH_LONG).show();
+        }
+
+        //if any are empty toast for wrong input
+        //else get inputs, get persondoc, create result hashmap, put to scorecard of person
+    }
+
+    public Document getScorecardOfPerson(Document personDoc){
+        Map<String, Object> personProperties = personDoc.getProperties();
+        Document scorecardOfPerson = null;
+        ArrayList<Map<String, Object>> personScorecards = (ArrayList<Map<String, Object>>) personProperties.get("scorecards");
+        for(Map<String, Object> scorecard : personScorecards){
+            String scorecardId = (String) scorecard.get("$ref");
+            scorecardOfPerson = mDatabase.getExistingDocument(scorecardId);
+            Map<String, Object> scorecardProperties = scorecardOfPerson.getProperties();
+            if((boolean)scorecardProperties.get("completed") == false){
+                return scorecardOfPerson;
+            }
+        }
+        return scorecardOfPerson;
+    }
+
+
+    public Document getDocOfPerson(String name){
+        String[] names = name.split(" ");
+        Query query = mDatabase.createAllDocumentsQuery();
+        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
+        try {
+            QueryEnumerator result = query.run();
+            for (Iterator<QueryRow> it = result; it.hasNext(); ) {
+                QueryRow row = it.next();
+                Document d = row.getDocument();
+                Map<String, Object> current = d.getProperties();
+                if(current.get("klasse").equals("Person") && current.get("firstName").equals(names[0])&&current.get("lastName").equals(names[1])){
+                    return d;
+                }
+            }
+        }catch (Exception e){
+
+        }
+        return null;
     }
 
     public Map<String, Object> getCurrentCompetition(){
@@ -228,5 +330,9 @@ public class TournamentActivity extends AppCompatActivity {
         String user_id = sharedPref.getString("user", "none");
         Document d = mDatabase.getExistingDocument(user_id);
         return d.getProperties();
+    }
+
+    private boolean isEmpty(EditText etText) {
+        return etText.getText().toString().trim().length() == 0;
     }
 }

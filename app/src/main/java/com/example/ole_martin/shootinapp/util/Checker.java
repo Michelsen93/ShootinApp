@@ -2,7 +2,7 @@ package com.example.ole_martin.shootinapp.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
+
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;

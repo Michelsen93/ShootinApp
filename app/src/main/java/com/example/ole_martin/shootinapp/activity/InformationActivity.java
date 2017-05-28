@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -98,7 +98,6 @@ public class InformationActivity extends AppCompatActivity {
         } );
         startTheView();
 
-        Toast.makeText(this, "hehehehehe", Toast.LENGTH_LONG).show();
     }
 
 
@@ -198,6 +197,7 @@ public class InformationActivity extends AppCompatActivity {
                 competitor.put(ref, person_id);
                 scorecardProperties.put("competitor", competitor);
                 scorecardProperties.put("completed", false);
+                scorecardProperties.put(klasse, "Scorecard");
                 Document personDoc = mDatabase.getExistingDocument(memberId);
                 Map<String, Object> scorecardRef = new HashMap<String, Object>();
                 scorecardRef.put(klasse, "Scorecard");
@@ -224,8 +224,7 @@ public class InformationActivity extends AppCompatActivity {
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();
                 }
-                    Replication push = mDatabase.createPushReplication(createSyncURL(false));
-                    push.start();
+
             }
             i = i++;
         }
@@ -243,7 +242,6 @@ public class InformationActivity extends AppCompatActivity {
     public Map<String, Object> findTeam(){
         //TODO - Get user from preferences
         Map<String, Object> tournament = getCurrentCompetition();
-
         ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
         Map<String, Object> user = getCurrentUser();
         for(Object team : teams){

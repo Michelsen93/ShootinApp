@@ -84,18 +84,21 @@
             android:layout_height="wrap_content"
             android:hint="Treff"
             android:id="@+id/hits"
+            android:inputType="numberPassword"
             />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Figurer"
             android:id="@+id/figures"
+            android:inputType="numberPassword"
             />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Innertreff"
             android:id="@+id/bullseye"
+            android:inputType="numberPassword"
             />
         <Button
             android:layout_width="match_parent"

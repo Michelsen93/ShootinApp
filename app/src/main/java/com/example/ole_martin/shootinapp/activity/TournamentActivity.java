@@ -182,7 +182,7 @@ public class TournamentActivity extends AppCompatActivity {
         LinearLayout standplassesLayout = (LinearLayout) findViewById(R.id.standplasses);
         Button clicked = (Button)v;
         for(int i = 0; i < standplassesLayout.getChildCount(); i++){
-            Button aButton = (Button) ll.getChildAt(i);
+            Button aButton = (Button) standplassesLayout.getChildAt(i);
             aButton.getBackground().clearColorFilter();
         }
         v.getBackground().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
@@ -244,6 +244,7 @@ public class TournamentActivity extends AppCompatActivity {
             }
             Replication push = mDatabase.createPushReplication(createSyncURL(false));
             push.start();
+            //TODO - Hide result form, display toast that all went well
 
 
 
@@ -258,10 +259,10 @@ public class TournamentActivity extends AppCompatActivity {
     public Document getScorecardOfPerson(Document personDoc){
         Map<String, Object> personProperties = personDoc.getProperties();
         Document scorecardOfPerson = null;
-        ArrayList<Map<String, Object>> personScorecards = (ArrayList<Map<String, Object>>) personProperties.get("scorecards");
+        ArrayList<Map<String, Object>> personScorecards = (ArrayList<Map<String, Object>>) personProperties.get("scoreCards");
         for(Map<String, Object> scorecard : personScorecards){
             String scorecardId = (String) scorecard.get("$ref");
-            scorecardOfPerson = mDatabase.getExistingDocument(scorecardId);
+            scorecardOfPerson = mDatabase.getExistingDocument("Scorecard|" + scorecardId);
             Map<String, Object> scorecardProperties = scorecardOfPerson.getProperties();
             if((boolean)scorecardProperties.get("completed") == false){
                 return scorecardOfPerson;

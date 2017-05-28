@@ -96,6 +96,8 @@ public class InformationActivity extends AppCompatActivity {
                 return true;
             }
         } );
+
+        //TODO - If active scorecards, only display info
         startTheView();
 
     }
@@ -228,7 +230,8 @@ public class InformationActivity extends AppCompatActivity {
             }
             i = i++;
         }
-
+        Replication push = mDatabase.createPushReplication(createSyncURL(false));
+        push.start();
 
     }
 

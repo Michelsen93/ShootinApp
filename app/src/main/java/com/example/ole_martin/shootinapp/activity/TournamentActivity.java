@@ -59,7 +59,7 @@ public class TournamentActivity extends AppCompatActivity {
     private EditText mBullseyes;
 
 
-    //TODO - Get team store in map
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,8 +244,10 @@ public class TournamentActivity extends AppCompatActivity {
             }
             Replication push = mDatabase.createPushReplication(createSyncURL(false));
             push.start();
-            //TODO - Hide result form, display toast that all went well
 
+            LinearLayout ll = (LinearLayout) findViewById(R.id.result_form);
+            ll.setVisibility(View.GONE);
+            Toast.makeText(this, "Resultat lagret", Toast.LENGTH_LONG).show();
 
 
         } else{
@@ -316,7 +318,7 @@ public class TournamentActivity extends AppCompatActivity {
         return syncURL;
     }
     public Map<String, Object> findTeam(){
-        //TODO - This method has to get team id from preferences, then load it for mDatabase
+
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
         String user_id = sharedPref.getString("team_id", "none");

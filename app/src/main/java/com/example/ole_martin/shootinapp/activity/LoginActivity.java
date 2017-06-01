@@ -40,9 +40,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public void doLogIn(View view){
         String username = ((EditText)findViewById(R.id.username_input)).getText().toString();
-        String password = ((EditText)findViewById(R.id.password_input)).getText().toString();;
+        //String password = ((EditText)findViewById(R.id.password_input)).getText().toString();;
 
-        logIn(username, password);
+        logIn(username, "password");
     }
 
     public void logIn(String userName, String password){

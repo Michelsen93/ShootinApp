@@ -5,15 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.text.Layout;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -33,9 +28,7 @@ import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.replicator.Replication;
-import com.example.ole_martin.shootinapp.Java_Classes.Scorecard;
 import com.example.ole_martin.shootinapp.R;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,12 +67,14 @@ public class TournamentActivity extends AppCompatActivity {
         mContext = this;
         mStandplasses = new HashMap<String, Map<String, Object>>();
         setUpCBL();
+        mSpinner = (Spinner) findViewById(R.id.person_spinner);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.tournament_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mSpinner = (Spinner) findViewById(R.id.person_spinner);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //Sets up navigationDrawer with clicks
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
@@ -142,22 +137,27 @@ public class TournamentActivity extends AppCompatActivity {
         Map<String, Object> currentCompetition = getCurrentCompetition();
         ArrayList<Map<String, Object>> standplasses = (ArrayList<Map<String, Object>>) currentCompetition.get("standplasses");
         for(Map<String, Object> standplass :  standplasses){
-            String asd ="Standplass|" + standplass.get("$ref");
+            String asd = (String) standplass.get("$ref");
             Document d = mDatabase.getExistingDocument(asd);
-            Map<String, Object> curStandplass = d.getProperties();
-            //Map values to show key = name, value = object
-            mStandplasses.put((String) curStandplass.get("name"), curStandplass);
-            Button button = new Button(this);
-            button.setText((String) curStandplass.get("name"));
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    showRegisterResult(v);
-                }
-            });
+            if(d== null){
+                String fds = "Standplass|" + standplass.get("$ref");
+                d = mDatabase.getExistingDocument("fds");
+            }
+            if(d != null) {
+                Map<String, Object> curStandplass = d.getProperties();
+                //Map values to show key = name, value = object
+                mStandplasses.put((String) curStandplass.get("name"), curStandplass);
+                Button button = new Button(this);
+                button.setText((String) curStandplass.get("name"));
+                button.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        showRegisterResult(v);
+                    }
+                });
 
-            LinearLayout layout = (LinearLayout) findViewById(R.id.standplasses);
-            layout.addView(button);
-
+                LinearLayout layout = (LinearLayout) findViewById(R.id.standplasses);
+                layout.addView(button);
+            }
 
 
 
@@ -245,8 +245,7 @@ public class TournamentActivity extends AppCompatActivity {
             Replication push = mDatabase.createPushReplication(createSyncURL(false));
             push.start();
 
-            LinearLayout ll = (LinearLayout) findViewById(R.id.result_form);
-            ll.setVisibility(View.GONE);
+
             Toast.makeText(this, "Resultat lagret", Toast.LENGTH_LONG).show();
 
 

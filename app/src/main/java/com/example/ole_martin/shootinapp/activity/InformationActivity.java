@@ -67,7 +67,6 @@ public class InformationActivity extends AppCompatActivity {
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -111,11 +110,17 @@ public class InformationActivity extends AppCompatActivity {
         String date = (String) team.get("startTime");
         TextView tv2 = (TextView) findViewById(R.id.timeView);
         tv2.setText(date.toString());
+
+
+        //if has active scorecards, display information
         displayTeam(team);
         //display team
         //display standplasses
 
     }
+
+
+
     public void displayTeam(Map<String, Object> team){
         mWeaponClasses = getAllWeaponClasses();
         mWeaponGroups = getAllWeaponGroups();

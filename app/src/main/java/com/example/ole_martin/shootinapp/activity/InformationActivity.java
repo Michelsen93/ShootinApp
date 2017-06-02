@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -33,6 +34,7 @@ import com.couchbase.lite.replicator.Replication;
 import com.example.ole_martin.shootinapp.R;
 import com.example.ole_martin.shootinapp.util.Checker;
 import com.example.ole_martin.shootinapp.util.DAO;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -51,17 +53,18 @@ public class InformationActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mToggle;
     private NavigationView mNavigationView;
     private Context mContext;
+    private boolean isCurrentlyActive;
     ArrayList<String> mWeaponClasses;
     ArrayList<String> mWeaponGroups;
     DAO mDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_information);
         mContext = this;
         setUpCBL();
-
-
+        isCurrentlyActive = false;
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.info_layout);
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
@@ -70,7 +73,7 @@ public class InformationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
@@ -82,11 +85,11 @@ public class InformationActivity extends AppCompatActivity {
                     Intent b = new Intent(getBaseContext(), SettingsActivity.class);
                     startActivity(b);
 
-                } else if(id == R.id.nav_live) {
+                } else if (id == R.id.nav_live) {
                     Intent c = new Intent(getBaseContext(), ShowStatsActivity.class);
                     startActivity(c);
 
-                } else if (id == R.id.nav_registration){
+                } else if (id == R.id.nav_registration) {
                     //allready on the activity no action needed?
                     Intent c = new Intent(getBaseContext(), TournamentActivity.class);
                     startActivity(c);
@@ -94,7 +97,7 @@ public class InformationActivity extends AppCompatActivity {
                 }
                 return true;
             }
-        } );
+        });
 
         //TODO - If active scorecards, only display info
         startTheView();
@@ -103,7 +106,7 @@ public class InformationActivity extends AppCompatActivity {
 
 
     //Dette funker ikke de må sikkert ikke være static
-    public void startTheView(){
+    public void startTheView() {
         Map<String, Object> tournament = getCurrentCompetition();
         Map<String, Object> team = findTeam();
 
@@ -112,7 +115,6 @@ public class InformationActivity extends AppCompatActivity {
         tv2.setText(date.toString());
 
 
-        //if has active scorecards, display information
         displayTeam(team);
         //display team
         //display standplasses
@@ -120,58 +122,89 @@ public class InformationActivity extends AppCompatActivity {
     }
 
 
-
-    public void displayTeam(Map<String, Object> team){
+    public void displayTeam(Map<String, Object> team) {
         mWeaponClasses = getAllWeaponClasses();
         mWeaponGroups = getAllWeaponGroups();
-        ArrayAdapter<String> wca = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, mWeaponClasses);
-        ArrayAdapter<String> wga = new ArrayAdapter<String> (this, android.R.layout.simple_spinner_dropdown_item, mWeaponGroups);
+        ArrayAdapter<String> wca = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, mWeaponClasses);
+        ArrayAdapter<String> wga = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, mWeaponGroups);
+
 
 
         TableLayout memberList = (TableLayout) findViewById(R.id.member_form);
-        ArrayList<Object> members = (ArrayList<Object>)team.get("competitors");
+        ArrayList<Object> members = (ArrayList<Object>) team.get("competitors");
 
-        for(Object member : members) {
+        for (Object member : members) {
             Map<String, Object> curMember = (Map<String, Object>) member;
             String personId = "Person|" + curMember.get("$ref");
             Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
-            String name = person.get("firstName") + " " + person.get("lastName");
-
-            TextView memberName = new TextView(this);
-            Spinner klasseSpinner = new Spinner(this);
-            Spinner gruppeSpinner = new Spinner(this);
-
-            memberName.setText(name);
-
-            memberName.setHint(personId);
-
-            TableRow memberLine = new TableRow(this);
-
-            memberName.setWidth(400);
-            memberLine.addView(memberName);
-            memberLine.addView(klasseSpinner);
-            memberLine.addView(gruppeSpinner);
-            memberList.addView(memberLine);
-            klasseSpinner.setAdapter(wca);
-            gruppeSpinner.setAdapter(wga);
-
+            ArrayList<Map<String, Object>> scorecardsOfPerson = (ArrayList<Map<String, Object>>) person.get("scoreCards");
+            for (Map<String, Object> scorecardRef : scorecardsOfPerson) {
+                String scorecardId = "Scorecard|" + scorecardRef.get("$ref");
+                Document scoreDoc = mDatabase.getExistingDocument(scorecardId);
+                if (scoreDoc != null) {
+                    Map<String, Object> scoreProperties = scoreDoc.getProperties();
+                    if ((boolean) scoreProperties.get("completed") == false) {
+                        isCurrentlyActive = true;
+                        break;
+                    }
+                }
+            }
         }
+        if (!isCurrentlyActive) {
+
+            for (Object member : members) {
+                Map<String, Object> curMember = (Map<String, Object>) member;
+                String personId = "Person|" + curMember.get("$ref");
+                Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
+                String name = person.get("firstName") + " " + person.get("lastName");
+
+                TextView memberName = new TextView(this);
+                Spinner klasseSpinner = new Spinner(this);
+                Spinner gruppeSpinner = new Spinner(this);
+
+                memberName.setText(name);
+
+                memberName.setHint(personId);
+
+                TableRow memberLine = new TableRow(this);
+
+                memberName.setWidth(400);
+                memberLine.addView(memberName);
+                memberLine.addView(klasseSpinner);
+                memberLine.addView(gruppeSpinner);
+                memberList.addView(memberLine);
+                klasseSpinner.setAdapter(wca);
+                gruppeSpinner.setAdapter(wga);
+
+            }
+        } else{
+            TableLayout tl = (TableLayout) findViewById(R.id.member_form);
+            tl.setVisibility(View.GONE);
+            Button button = (Button) findViewById(R.id.registerButton);
+            button.setText("Fortsett registrering");
+            TextView tv = (TextView) findViewById(R.id.deltagere_tag);
+            tv.setVisibility(View.GONE);
+            Toast.makeText(this, "Noen på laget er ikke ferdig.. fullfør registrering", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
-    public void goToRegisterActivity(View view){
+    public void goToRegisterActivity(View view) {
         //Fetch filled data, Create new scorecard, add to db
-        createScorecards();
-
+        if(!isCurrentlyActive){
+            createScorecards();
+        }
 
         Intent intent = new Intent(this, TournamentActivity.class);
         startActivity(intent);
     }
 
-    public void createScorecards(){
+    public void createScorecards() {
         TableLayout tl = (TableLayout) findViewById(R.id.member_form);
-        for(int i = 1; i<tl.getChildCount(); i++){
+        for (int i = 1; i < tl.getChildCount(); i++) {
             View child = tl.getChildAt(i);
-            if( child instanceof TableRow){
+            if (child instanceof TableRow) {
                 TableRow row = (TableRow) child;
                 TextView member = (TextView) ((TableRow) child).getChildAt(0);
                 Spinner klasseSpinner = (Spinner) ((TableRow) child).getChildAt(1);
@@ -211,7 +244,7 @@ public class InformationActivity extends AppCompatActivity {
                 scorecardRef.put(ref, scorecard_id);
                 ArrayList<Object> scorecards = (ArrayList<Object>) thePerson.get("scoreCards");
                 scorecards.add(scorecardRef);
-                HashMap<String, Object> alteredPerson = new HashMap<String,Object>();
+                HashMap<String, Object> alteredPerson = new HashMap<String, Object>();
                 alteredPerson.putAll(thePerson);
                 alteredPerson.put("scoreCards", scorecards);
                 SharedPreferences sharedPref = mContext.getSharedPreferences(
@@ -240,28 +273,29 @@ public class InformationActivity extends AppCompatActivity {
 
     }
 
-    public Map<String, Object> getCurrentCompetition(){
+    public Map<String, Object> getCurrentCompetition() {
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
         String t_id = sharedPref.getString("tournament_id", "none");
         Document d = mDatabase.getExistingDocument(t_id);
         return d.getProperties();
     }
-    public Map<String, Object> findTeam(){
+
+    public Map<String, Object> findTeam() {
         //TODO - Get user from preferences
         Map<String, Object> tournament = getCurrentCompetition();
         ArrayList<Object> teams = (ArrayList<Object>) tournament.get("teams");
         Map<String, Object> user = getCurrentUser();
-        for(Object team : teams){
-            Map<String, Object> currentTeam = (Map<String, Object>)team;
+        for (Object team : teams) {
+            Map<String, Object> currentTeam = (Map<String, Object>) team;
             String teamId = "Team|" + currentTeam.get("$ref");
             Map<String, Object> theTeam = mDatabase.getExistingDocument(teamId).getProperties();
-            ArrayList<Object> members = (ArrayList<Object>)theTeam.get("competitors");
-            for(Object member : members){
+            ArrayList<Object> members = (ArrayList<Object>) theTeam.get("competitors");
+            for (Object member : members) {
                 Map<String, Object> curMember = (Map<String, Object>) member;
                 String personId = "Person|" + curMember.get("$ref");
                 Map<String, Object> person = mDatabase.getExistingDocument(personId).getProperties();
-                if(person.get("mail").equals(user.get("mail"))){
+                if (person.get("mail").equals(user.get("mail"))) {
                     //TODO - Save team to preferences
                     SharedPreferences sharedPref = mContext.getSharedPreferences(
                             mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
@@ -277,16 +311,17 @@ public class InformationActivity extends AppCompatActivity {
         return null;
     }
 
-    public Map<String, Object> getCurrentUser(){
+    public Map<String, Object> getCurrentUser() {
         SharedPreferences sharedPref = mContext.getSharedPreferences(
                 mContext.getString(R.string.preferences), Context.MODE_PRIVATE);
         String user_id = sharedPref.getString("user", "none");
         Document d = mDatabase.getExistingDocument(user_id);
         return d.getProperties();
     }
-    public void setUpCBL(){
 
-        try{
+    public void setUpCBL() {
+
+        try {
             mManager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
             mDatabase = mManager.getDatabase(mContext.getResources().getString(R.string.DB_NAME));
             startPullReplication();
@@ -297,11 +332,13 @@ public class InformationActivity extends AppCompatActivity {
         }
 
     }
+
     public void startPullReplication() throws CouchbaseLiteException {
         Replication pull = mDatabase.createPullReplication(this.createSyncURL(false));
         pull.start();
     }
-    public URL createSyncURL(boolean isEncrypted){
+
+    public URL createSyncURL(boolean isEncrypted) {
         URL syncURL = null;
         String host = "http://" + mContext.getResources().getString(R.string.ip_address);
         String port = "4984";
@@ -314,7 +351,7 @@ public class InformationActivity extends AppCompatActivity {
         return syncURL;
     }
 
-    public ArrayList<String> getAllWeaponGroups(){
+    public ArrayList<String> getAllWeaponGroups() {
         ArrayList<String> strings = new ArrayList<>();
         ArrayList<Map<String, Object>> weaponGroups = new ArrayList<Map<String, Object>>();
         Query query = mDatabase.createAllDocumentsQuery();
@@ -325,21 +362,21 @@ public class InformationActivity extends AppCompatActivity {
                 QueryRow row = it.next();
                 Document d = row.getDocument();
                 Map<String, Object> current = d.getProperties();
-                if(current.get("klasse").equals("WeaponGroup")){
+                if (current.get("klasse").equals("WeaponGroup")) {
                     weaponGroups.add(current);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
-        for(Map<String, Object> groups : weaponGroups){
+        for (Map<String, Object> groups : weaponGroups) {
             strings.add((String) groups.get("name"));
         }
         return strings;
     }
 
-    public ArrayList<String> getAllWeaponClasses(){
+    public ArrayList<String> getAllWeaponClasses() {
         ArrayList<String> strings = new ArrayList<>();
         ArrayList<Map<String, Object>> weaponClasses = new ArrayList<Map<String, Object>>();
         Query query = mDatabase.createAllDocumentsQuery();
@@ -350,21 +387,21 @@ public class InformationActivity extends AppCompatActivity {
                 QueryRow row = it.next();
                 Document d = row.getDocument();
                 Map<String, Object> current = d.getProperties();
-                if(current.get("klasse").equals("WeaponClass")){
+                if (current.get("klasse").equals("WeaponClass")) {
                     weaponClasses.add(current);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-        for(Map<String, Object> classes : weaponClasses){
+        for (Map<String, Object> classes : weaponClasses) {
             strings.add((String) classes.get("weaponName"));
         }
         return strings;
 
     }
 
-    public String getAWaponClassRef(String weaponName){
+    public String getAWaponClassRef(String weaponName) {
 
         Query query = mDatabase.createAllDocumentsQuery();
         query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
@@ -374,17 +411,18 @@ public class InformationActivity extends AppCompatActivity {
                 QueryRow row = it.next();
                 Document d = row.getDocument();
                 Map<String, Object> current = d.getProperties();
-                if(current.get("klasse").equals("WeaponClass") && current.get("weaponName").equals(weaponName)){
-                    return (String)current.get("_id");
+                if (current.get("klasse").equals("WeaponClass") && current.get("weaponName").equals(weaponName)) {
+                    return (String) current.get("_id");
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
         return "ikke spesifisert";
     }
-    public String getAWaponGroupRef(String name){
+
+    public String getAWaponGroupRef(String name) {
 
         Query query = mDatabase.createAllDocumentsQuery();
         query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
@@ -394,13 +432,13 @@ public class InformationActivity extends AppCompatActivity {
                 QueryRow row = it.next();
                 Document d = row.getDocument();
                 Map<String, Object> current = d.getProperties();
-                if(current.get("klasse").equals("WeaponGroup") && current.get("name").equals(name)){
-                    String id = (String)current.get("_id"); //abc|asdhgegei
+                if (current.get("klasse").equals("WeaponGroup") && current.get("name").equals(name)) {
+                    String id = (String) current.get("_id"); //abc|asdhgegei
                     String[] parts = id.split("\\|");
                     return parts[1];
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 

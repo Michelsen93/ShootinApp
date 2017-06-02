@@ -16,16 +16,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start Tid:"
+            android:textSize="25dp"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/timeView"
+            android:textSize="25dp"
             />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Deltakere:"
+            android:textSize="25dp"
+            android:id="@+id/deltagere_tag"
+            android:layout_gravity="center"
             />
 
         <TableLayout
@@ -65,10 +70,12 @@
 
         </LinearLayout>
         <Button
+            android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start ny runde"
             android:onClick="goToRegisterActivity"
+            android:backgroundTint="@color/colorAccent"
             />
 
 

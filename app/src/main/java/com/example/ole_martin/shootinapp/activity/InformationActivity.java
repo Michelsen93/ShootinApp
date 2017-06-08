@@ -73,6 +73,7 @@ public class InformationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -90,7 +91,6 @@ public class InformationActivity extends AppCompatActivity {
                     startActivity(c);
 
                 } else if (id == R.id.nav_registration) {
-                    //allready on the activity no action needed?
                     Intent c = new Intent(getBaseContext(), TournamentActivity.class);
                     startActivity(c);
 
@@ -234,7 +234,8 @@ public class InformationActivity extends AppCompatActivity {
                 scorecardProperties.put("results", results);
                 Map<String, Object> competitor = new HashMap<String, Object>();
                 competitor.put(klasse, "Person");
-                competitor.put(ref, person_id);
+                String[] split = person_id.split("\\|");
+                competitor.put(ref, split[1]);
                 scorecardProperties.put("competitor", competitor);
                 scorecardProperties.put("completed", false);
                 scorecardProperties.put(klasse, "Scorecard");
@@ -271,6 +272,14 @@ public class InformationActivity extends AppCompatActivity {
         Replication push = mDatabase.createPushReplication(createSyncURL(false));
         push.start();
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public Map<String, Object> getCurrentCompetition() {

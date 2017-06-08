@@ -48,6 +48,7 @@ public class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 ArrayList<String> resultList = new ArrayList<String>();
+                resultList.add(items[position]);
                 Map<String, Object> card = scoreCardProperties.get(position);
                 ArrayList<Map<String, Object>> results = (ArrayList<Map<String, Object>>) card.get("results");
                 for(Map<String, Object> result : results){

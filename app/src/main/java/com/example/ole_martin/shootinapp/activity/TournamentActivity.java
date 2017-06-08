@@ -86,6 +86,7 @@ public class TournamentActivity extends AppCompatActivity {
 
         //Sets up navigationDrawer with clicks
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.bringToFront();
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -103,9 +104,8 @@ public class TournamentActivity extends AppCompatActivity {
                     startActivity(c);
 
                 } else if (id == R.id.nav_registration) {
-                    //allready on the activity no action needed?
-                    Intent c = new Intent(getBaseContext(), TournamentActivity.class);
-                    startActivity(c);
+                    Intent d = new Intent(getBaseContext(), TournamentActivity.class);
+                    startActivity(d);
 
                 }
                 return true;
@@ -247,7 +247,7 @@ public class TournamentActivity extends AppCompatActivity {
             int hits = Integer.parseInt(mHits.getText().toString());
             int figures = Integer.parseInt(mFigures.getText().toString());
             Document personDoc = getDocOfPerson(name);
-            String standplass = (String) mStandplasses.get(standplassName).get("number");
+            String standplass = (String) mStandplasses.get(standplassName).get("name");
             HashMap<String, Object> result = new HashMap<String, Object>();
             result.put("hits", hits);
             result.put("figures", figures);

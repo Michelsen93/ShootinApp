@@ -100,7 +100,7 @@ public class ShowStatsActivity extends AppCompatActivity {
             String id = "Scorecard|" + scorecard.get("$ref");
             Document scoreardDocument = mDatabase.getExistingDocument(id);
             Map<String, Object> scoreCardProperties = scoreardDocument.getProperties();
-            String personId = (String)((Map<String, Object>) scoreCardProperties.get("competitor")).get("$ref");
+            String personId = (String)"Person|" + ((Map<String, Object>) scoreCardProperties.get("competitor")).get("$ref");
             int hits = 0;
             int figures = 0;
             int bullseyes = 0;

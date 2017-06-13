@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/nav_account"
-        android:icon="@mipmap/ic_person_black_24dp"
-        android:title="Account"/>
+
 
     <item android:id="@+id/nav_live"
         android:icon="@mipmap/ic_rss_feed_black_24dp"
@@ -11,11 +9,11 @@
 
     <item android:id="@+id/nav_registration"
         android:icon="@mipmap/ic_assignment_black_24dp"
-        android:title="Registration"/>
+        android:title="Registrering"/>
 
     <item android:id="@+id/nav_settings"
         android:icon="@mipmap/ic_settings_black_24dp"
-        android:title="Settings"/>
+        android:title="Logg ut"/>
 
 
 </menu>

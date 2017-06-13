@@ -63,11 +63,7 @@ public class ShowStatsActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if (id == R.id.nav_account) {
-                    Intent a = new Intent(getBaseContext(), MyAccountActivity.class);
-                    startActivity(a);
-
-                } else if (id == R.id.nav_settings) {
+                if (id == R.id.nav_settings) {
                     Intent b = new Intent(getBaseContext(), SettingsActivity.class);
                     startActivity(b);
 

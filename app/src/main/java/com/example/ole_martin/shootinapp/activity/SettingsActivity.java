@@ -1,12 +1,15 @@
 package com.example.ole_martin.shootinapp.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.ole_martin.shootinapp.R;
 
@@ -33,11 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if (id == R.id.nav_account) {
-                    Intent a = new Intent(getBaseContext(), MyAccountActivity.class);
-                    startActivity(a);
-
-                } else if (id == R.id.nav_settings) {
+                if (id == R.id.nav_settings) {
                     Intent b = new Intent(getBaseContext(), SettingsActivity.class);
                     startActivity(b);
 
@@ -60,6 +59,14 @@ public class SettingsActivity extends AppCompatActivity {
         //Let user have optaion to register result for team member
 
 
+    }
+
+    public void doLogOut(View v){
+        SharedPreferences sharedPref = this.getSharedPreferences(
+                this.getString(R.string.preferences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("user", "none");
+        editor.commit();
     }
 
     @Override

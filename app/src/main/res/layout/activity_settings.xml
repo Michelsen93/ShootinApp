@@ -11,6 +11,14 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="doLogOut"
+            android:text="Logg ut"
+            android:backgroundTint="@color/colorAccent"
+            android:layout_gravity="center"
+            />
 
     </LinearLayout>
     <android.support.design.widget.NavigationView

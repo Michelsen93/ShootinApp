@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.ole_martin.shootinapp.R;
 
@@ -65,8 +66,11 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences(
                 this.getString(R.string.preferences), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("user", "none");
-        editor.commit();
+        editor.remove("user");
+        editor.apply();
+        Toast.makeText(this, "logget ut", Toast.LENGTH_LONG).show();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
     }
 
     @Override
